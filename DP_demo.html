@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Clients (Data Product)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        h1 {
+            color: #4a54e1;
+            text-align: center;
+        }
+        .kpi-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .kpi-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .kpi-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4a54e1;
+        }
+        .kpi-label {
+            font-size: 1em;
+            color: #777;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4a54e1;
+            color: white;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4a54e1;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Dashboard des Clients (Data Product)</h1>
+        
+        <div class="kpi-container" id="kpiContainer">
+            <div class="kpi-card">
+                <div class="kpi-value" id="totalClientsValue">...</div>
+                <div class="kpi-label">Nombre total de clients</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="optInClientsValue">...</div>
+                <div class="kpi-label">Clients opt-in</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="franceClientsValue">...</div>
+                <div class="kpi-label">Clients en France</div>
+            </div>
+        </div>
+
+        <h2>Détail des clients</h2>
+        <div id="loader" class="loader"></div>
+        <table id="customersTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID Client</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Opt-in</th>
+                    <th>Ville</th>
+                    <th>Date d'inscription</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // --- Configuration de l'API ---
+        const API_URL = 'https://presales.eu.qlikcloud.com/api/data-governance/data-access/data-products/68c2e58fe8a70b5ede9539ad/datasets/68c2d678b7a0c0d932c13189/connections/2cc2f840-bc9d-443e-ad82-eff73e91904a'; // Remplace par l'URL de ton Data Product Qlik
+        const API_TOKEN = 'eyJhbGciOiJFUzM4NCIsImtpZCI6Ijg2NDBjNmU5LTQwNDctNDdmYi04MzkzLTM4Y2VhOGI3NDJhOCIsInR5cCI6IkpXVCJ9.eyJzdWJUeXBlIjoidXNlciIsInRlbmFudElkIjoiYUZvMF9DS1ZYaHQ3SG12Tl9LZDV1ZnAzUTRqc2hJc2UiLCJqdGkiOiI4NjQwYzZlOS00MDQ3LTQ3ZmItODM5My0zOGNlYThiNzQyYTgiLCJhdWQiOiJxbGlrLmFwaSIsImlzcyI6InFsaWsuYXBpL2FwaS1rZXlzIiwic3ViIjoiNjU1MWZhOWJjNDdjOTllZjI0M2E2MmFkIn0.qrIEmstiwYV8fh3FWd2LQ5hsMEB5a1o2BmRFTzbtsk8GCuecEBhZGSrWr4JniUInGb-_S79pkGFHdMdR-V9eXxI5tVh2J-p7jIqK2EN6vliLii2eGjp9OGkhgFqh644F'; // Remplace par ton token d'autorisation
+
+        // --- Récupération et affichage des données ---
+        async function fetchData() {
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('customersTable').style.display = 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${API_TOKEN}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const customersData = data.value; // Les données OData sont souvent dans la propriété 'value'
+
+                // Mise à jour des KPI
+                const totalClients = customersData.length;
+                const optInClients = customersData.filter(c => c.opt_in === true).length;
+                const franceClients = customersData.filter(c => c.country === 'France').length;
+
+                document.getElementById('totalClientsValue').textContent = totalClients;
+                document.getElementById('optInClientsValue').textContent = optInClients;
+                document.getElementById('franceClientsValue').textContent = franceClients;
+
+                // Affichage des données dans le tableau
+                const tableBody = document.querySelector('#customersTable tbody');
+                tableBody.innerHTML = ''; // Efface les anciennes données
+                customersData.forEach(customer => {
+                    const row = tableBody.insertRow();
+                    row.insertCell(0).textContent = customer.customer_id;
+                    row.insertCell(1).textContent = customer.customer_name;
+                    row.insertCell(2).textContent = customer.email;
+                    row.insertCell(3).textContent = customer.phone_number;
+                    row.insertCell(4).textContent = customer.opt_in ? 'Oui' : 'Non';
+                    row.insertCell(5).textContent = customer.city;
+                    row.insertCell(6).textContent = customer.registration_date.substring(0, 10);
+                });
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('customersTable').style.display = 'table';
+
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données:', error);
+                document.getElementById('loader').style.display = 'none';
+                alert('Impossible de charger les données. Vérifiez l\'URL de l\'API et le token.');
+            }
+        }
+
+        // Appelle la fonction au chargement de la page
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+</body>
+</html>
