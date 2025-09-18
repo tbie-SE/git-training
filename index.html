@@ -41,11 +41,10 @@
 
     <script>
         // --- Configuration de l'API ---
-        const API_URL = 'https://cors-anywhere.herokuapp.com/https://api.us.cloud.talend.com/orchestration/workspaces'; // Remplace par l'URL de ton Data Product Qlik
-        //const API_URL = 'https://presales.eu.qlikcloud.com/api/data-governance/data-access/data-products/68c2e58fe8a70b5ede9539ad/datasets/68c2d678b7a0c0d932c13189/connections/2cc2f840-bc9d-443e-ad82-eff73e91904a'; // Remplace par l'URL de ton Data Product Qlik
-        const API_TOKEN = 'YicGmDW8Rp-_GZJoS1M5AEO6r_0MDlwy-dEF7oFvzT909Ys_siNJLV7fAmHA31tV'; // Remplace par ton token d'autorisation
-
-        //const API_TOKEN = 'eyJhbGciOiJFUzM4NCIsImtpZCI6Ijg2NDBjNmU5LTQwNDctNDdmYi04MzkzLTM4Y2VhOGI3NDJhOCIsInR5cCI6IkpXVCJ9.eyJzdWJUeXBlIjoidXNlciIsInRlbmFudElkIjoiYUZvMF9DS1ZYaHQ3SG12Tl9LZDV1ZnAzUTRqc2hJc2UiLCJqdGkiOiI4NjQwYzZlOS00MDQ3LTQ3ZmItODM5My0zOGNlYThiNzQyYTgiLCJhdWQiOiJxbGlrLmFwaSIsImlzcyI6InFsaWsuYXBpL2FwaS1rZXlzIiwic3ViIjoiNjU1MWZhOWJjNDdjOTllZjI0M2E2MmFkIn0.qrIEmstiwYV8fh3FWd2LQ5hsMEB5a1o2BmRFTzbtsk8GCuecEBhZGSrWr4JniUInGb-_S79pkGFHdMdR-V9eXxI5tVh2J-p7jIqK2EN6vliLii2eGjp9OGkhgFqh644F'; // Remplace par ton token d'autorisation
+        //const API_URL = 'https://cors-anywhere.herokuapp.com/https://api.us.cloud.talend.com/orchestration/workspaces'; // Remplace par l'URL de ton Data Product Qlik
+        const API_URL = 'https://presales.eu.qlikcloud.com/api/data-governance/data-access/data-products/68c2e58fe8a70b5ede9539ad/datasets/68c2d678b7a0c0d932c13189/connections/2cc2f840-bc9d-443e-ad82-eff73e91904a'; // Remplace par l'URL de ton Data Product Qlik
+        //const API_TOKEN = 'YicGmDW8Rp-_GZJoS1M5AEO6r_0MDlwy-dEF7oFvzT909Ys_siNJLV7fAmHA31tV'; // Remplace par ton token d'autorisation
+        const API_TOKEN = 'eyJhbGciOiJFUzM4NCIsImtpZCI6Ijg2NDBjNmU5LTQwNDctNDdmYi04MzkzLTM4Y2VhOGI3NDJhOCIsInR5cCI6IkpXVCJ9.eyJzdWJUeXBlIjoidXNlciIsInRlbmFudElkIjoiYUZvMF9DS1ZYaHQ3SG12Tl9LZDV1ZnAzUTRqc2hJc2UiLCJqdGkiOiI4NjQwYzZlOS00MDQ3LTQ3ZmItODM5My0zOGNlYThiNzQyYTgiLCJhdWQiOiJxbGlrLmFwaSIsImlzcyI6InFsaWsuYXBpL2FwaS1rZXlzIiwic3ViIjoiNjU1MWZhOWJjNDdjOTllZjI0M2E2MmFkIn0.qrIEmstiwYV8fh3FWd2LQ5hsMEB5a1o2BmRFTzbtsk8GCuecEBhZGSrWr4JniUInGb-_S79pkGFHdMdR-V9eXxI5tVh2J-p7jIqK2EN6vliLii2eGjp9OGkhgFqh644F'; // Remplace par ton token d'autorisation
 
         async function fetchData() {
             const resultDiv = document.getElementById('result');
